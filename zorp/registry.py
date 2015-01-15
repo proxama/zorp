@@ -71,6 +71,11 @@ class Registry(object):
         using `name` as the key
         """
 
+        schema = schema_from_function(func)
+
+        self.methods[name] = func
+        self.schemas[name] = schema
+
     def get(self, name):
         """
         Return a tuple containing the schema and function
@@ -78,3 +83,5 @@ class Registry(object):
 
         Throw a KeyError if it doesn't exist
         """
+
+        return (self.schemas[name], self.methods[name])
