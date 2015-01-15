@@ -1,10 +1,10 @@
 """
-Zorp tests
+Registry tests
 """
 
 import unittest
 
-from registry import Registry
+from registry import Registry, schema_from_function
 
 class TestRegistry(unittest.TestCase):
     """
@@ -20,23 +20,7 @@ class TestRegistry(unittest.TestCase):
 
         self.name = "my func"
         self.func = lambda x, y=1: (x + y) * 2
-        self.schema = {
-            "properties": {
-                "args": {
-                    "type": "array",
-                    "items": [{}],
-                    "additionalItems": False
-                },
-                "kwargs": {
-                    "type": "object",
-                    "properties": {
-                        "y": {}
-                    },
-                    "additionalProperties": False
-                }
-            },
-            "required": ["args", "kwargs"]
-        }
+        self.schema = schema_from_function(self.func)
 
     def test_init(self):
         """
