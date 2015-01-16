@@ -1,14 +1,5 @@
 # TODO
 
-* `remote_method` decorator
-    * if no name is passed in to the decorator, use the function's name
-    * register the function and name with the registry
-
-* remote method registry
-    * maintain a list of functions, indexed by name
-    * prepare json schema from registered function signature
-    * return (schema, function) tuples from a provided method name
-
 * server
     * open a zeromq socket using the specified bind address and port
     * wait for a request
@@ -27,3 +18,14 @@
     * if there has been no response within the timeout period, retry
     * fail when the maximum number of tries have timed out
     * parse and return the response
+
+# Done
+
+* `remote_method` decorator
+    * if no name is passed in to the decorator, use the function's name
+    * register the function and name with the registry
+
+* remote method registry
+    * maintain a list of functions, indexed by name
+    * prepare json schema from registered function signature
+    * return (schema, function) tuples from a provided method name
