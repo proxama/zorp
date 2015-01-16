@@ -85,3 +85,5 @@ class Registry(object):
         """
 
         return (self.schemas[name], self.methods[name])
+
+registry = Registry()

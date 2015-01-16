@@ -2,5 +2,6 @@
 Zorp tests
 """
 
-from tests.test_registry import TestRegistry
-from tests.test_schema_generator import TestSchemaFromFunction
+from tests.decorator import TestRemoteMethod
+from tests.registry import TestRegistry
+from tests.schema_generator import TestSchemaFromFunction
