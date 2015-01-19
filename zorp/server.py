@@ -86,7 +86,10 @@ class Server(Thread):
         args = list(request["parameters"]["args"])
         kwargs = request["parameters"]["kwargs"]
 
-        response = func(*args, **kwargs)
+        try:
+            response = func(*args, **kwargs)
+        except Exception as exc:
+            return self._error(str(exc))
 
         return json.dumps(response)
 

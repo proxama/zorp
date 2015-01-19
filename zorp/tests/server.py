@@ -1,5 +1,5 @@
 """
-Registry tests
+Server tests
 """
 
 import json
@@ -119,3 +119,26 @@ class TestServer(unittest.TestCase):
         """
         Test errors in the method are trapped and returned
         """
+
+        error_message = "Houston, we have a problem"
+
+        @remote_method(use_registry=self.registry)
+        def bad_method():
+            raise Exception(error_message)
+
+        expected = {
+            "error": error_message
+        }
+
+        request = json.dumps({
+            "method": "bad_method",
+            "parameters": {
+                "args": [],
+                "kwargs": {}
+            }
+        })
+
+        response = self.server._handle_request(request)
+        response = json.loads(response)
+
+        self.assertEqual(expected, response)
