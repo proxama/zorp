@@ -20,8 +20,8 @@ class TestSchemaFromFunction(unittest.TestCase):
             "properties": {
                 "args": {
                     "type": "array",
-                    "items": [],
-                    "additionalItems": False
+                    "minItems": 0,
+                    "maxItems": 0
                 },
                 "kwargs": {
                     "type": "object",
@@ -54,7 +54,8 @@ class TestSchemaFromFunction(unittest.TestCase):
         schema = schema_from_function(func)
 
         expected_schema = self.base
-        expected_schema["properties"]["args"]["items"] = [{}]
+        expected_schema["properties"]["args"]["minItems"] = 1
+        expected_schema["properties"]["args"]["maxItems"] = 1
 
         self.assertDictEqual(expected_schema, schema)
 
@@ -68,7 +69,8 @@ class TestSchemaFromFunction(unittest.TestCase):
         schema = schema_from_function(func)
 
         expected_schema = self.base
-        expected_schema["properties"]["args"]["items"] = [{}, {}]
+        expected_schema["properties"]["args"]["minItems"] = 2
+        expected_schema["properties"]["args"]["maxItems"] = 2
 
         self.assertDictEqual(expected_schema, schema)
 
@@ -113,7 +115,8 @@ class TestSchemaFromFunction(unittest.TestCase):
         schema = schema_from_function(func)
 
         expected_schema = self.base
-        expected_schema["properties"]["args"]["items"] = [{}]
+        expected_schema["properties"]["args"]["minItems"] = 1
+        expected_schema["properties"]["args"]["maxItems"] = 1
         expected_schema["properties"]["kwargs"]["properties"] = {"y": {}}
 
         self.assertDictEqual(expected_schema, schema)

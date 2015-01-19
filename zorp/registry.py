@@ -10,13 +10,10 @@ BASE_SCHEMA = {
     "properties": {
         "args": {
             "type": "array",
-            "items": [],
-            "additionalItems": False,
         },
         "kwargs": {
             "type": "object",
             "additionalProperties": False,
-            "properties": {},
         },
     },
 }
@@ -40,7 +37,9 @@ def schema_from_function(func):
 
     schema = BASE_SCHEMA
 
-    schema["properties"]["args"]["items"] = [{}] * len(args)
+    schema["properties"]["args"]["minItems"] = len(args)
+    schema["properties"]["args"]["maxItems"] = len(args)
+
     schema["properties"]["kwargs"]["properties"] = {
         key: {}
         for key
