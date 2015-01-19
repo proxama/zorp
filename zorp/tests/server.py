@@ -38,10 +38,14 @@ class TestServer(unittest.TestCase):
             "error": "Invalid payload"
         }
 
+        # Invalid json
         response = self.server._handle_request("")
-
         response = json.loads(response)
+        self.assertDictEqual(expected, response)
 
+        # Doesn't match the request schema
+        response = self.server._handle_request("{}")
+        response = json.loads(response)
         self.assertDictEqual(expected, response)
 
     def test_unknown_method(self):

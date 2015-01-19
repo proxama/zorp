@@ -2,10 +2,26 @@
 Server
 """
 
+import json
+from jsonschema import validate, ValidationError
 from threading import Thread
 import zmq
 
 from registry import registry
+
+REQUEST_SCHEMA = {
+    "type": "object",
+    "required": ["method", "parameters"],
+    "additionalProperties": False,
+    "properties": {
+        "method": {
+            "type": "string",
+        },
+        "parameters": {
+            "type": "object",
+        },
+    },
+}
 
 class Server(Thread):
     """
@@ -28,6 +44,15 @@ class Server(Thread):
         """
         Wait for a request and process it
         """
+
+        try:
+            request = json.loads(request)
+
+            validate(request, REQUEST_SCHEMA)
+        except (ValueError, ValidationError):
+            return json.dumps({
+                "error": "Invalid payload"
+            })
 
         return "goodbye, world"
 
