@@ -40,6 +40,15 @@ class Server(Thread):
 
         super(Server, self).__init__(*args, **kwargs)
 
+    def _error(self, message):
+        """
+        Construct an error response with the given message
+        """
+
+        return json.dumps({
+            "error": message
+        })
+
     def _handle_request(self, request):
         """
         Wait for a request and process it
@@ -50,9 +59,17 @@ class Server(Thread):
 
             validate(request, REQUEST_SCHEMA)
         except (ValueError, ValidationError):
-            return json.dumps({
-                "error": "Invalid payload"
-            })
+            return self._error("Invalid payload")
+
+        try:
+            (schema, func) = self.registry.get(request["method"])
+        except KeyError:
+            return self._error("Unknown method")
+
+        try:
+            validate(request["parameters"], schema)
+        except ValidationError:
+            return self._error("Parameters do not match the method signature")
 
         return "goodbye, world"
 

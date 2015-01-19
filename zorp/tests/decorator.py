@@ -33,7 +33,7 @@ class TestRemoteMethod(unittest.TestCase):
         registered using its own name
         """
 
-        remote_method(self.func, use_registry=self.registry)
+        remote_method(use_registry=self.registry)(self.func)
 
         (schema, func) = self.registry.get("func")
 
@@ -43,7 +43,7 @@ class TestRemoteMethod(unittest.TestCase):
         registered using a supplied name
         """
 
-        remote_method(self.func, "my func", use_registry=self.registry)
+        remote_method("my func", use_registry=self.registry)(self.func)
 
         (schema, func) = self.registry.get("my func")
 

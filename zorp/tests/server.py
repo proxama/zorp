@@ -4,7 +4,6 @@ Registry tests
 
 import json
 import unittest
-import zmq
 
 from decorator import remote_method
 from registry import Registry
@@ -28,6 +27,10 @@ class TestServer(unittest.TestCase):
         self.registry = Registry()
 
         self.server = Server(use_registry=self.registry)
+
+        @remote_method(use_registry=self.registry)
+        def hello(name):
+            return "Hello, {}".format(name)
 
     def test_bad_payload(self):
         """
@@ -53,10 +56,40 @@ class TestServer(unittest.TestCase):
         Test we get an error for an unknown method
         """
 
+        expected = {
+            "error": "Unknown method"
+        }
+
+        request = json.dumps({
+            "method": "not a method",
+            "parameters": {
+            }
+        })
+
+        response = self.server._handle_request(request)
+        response = json.loads(response)
+
+        self.assertDictEqual(expected, response)
+
     def test_invalid_parameters(self):
         """
         Test we get an error for invalid parameters
         """
+
+        expected = {
+            "error": "Parameters do not match the method signature"
+        }
+
+        request = json.dumps({
+            "method": "hello",
+            "parameters": {
+            }
+        })
+
+        response = self.server._handle_request(request)
+        response = json.loads(response)
+
+        self.assertDictEqual(expected, response)
 
     def test_successful_call(self):
         """
