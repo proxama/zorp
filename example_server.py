@@ -8,4 +8,8 @@ from zorp import remote_method, Server
 def hello(who):
     return "Hello, {}".format(who)
 
+@remote_method("goodbye")
+def say_bye():
+    return "Goodbye world"
+
 server = Server().join()
