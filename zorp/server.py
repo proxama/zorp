@@ -3,11 +3,11 @@ Server
 """
 
 import json
-from jsonschema import validate, ValidationError
+from jsonschema import Draft4Validator, ValidationError
 from threading import Thread
 import zmq
 
-from registry import registry
+from registry import registry, BASE_SCHEMA
 
 REQUEST_SCHEMA = {
     "type": "object",
@@ -15,12 +15,22 @@ REQUEST_SCHEMA = {
     "additionalProperties": False,
     "properties": {
         "method": {
-            "type": "string",
+            "type": "string"
         },
         "parameters": {
             "type": "object",
-        },
-    },
+            "required": ["args", "kwargs"],
+            "additionalProperties": False,
+            "properties": {
+                "args": {
+                    "type": "array"
+                },
+                "kwargs": {
+                    "type": "object"
+                }
+            }
+        }
+    }
 }
 
 class Server(Thread):
@@ -37,6 +47,8 @@ class Server(Thread):
 
         self.address = address
         self.port = port
+
+        self.validator = Draft4Validator(REQUEST_SCHEMA)
 
         super(Server, self).__init__(*args, **kwargs)
 
@@ -57,7 +69,7 @@ class Server(Thread):
         try:
             request = json.loads(request)
 
-            validate(request, REQUEST_SCHEMA)
+            self.validator.validate(request, REQUEST_SCHEMA)
         except (ValueError, ValidationError):
             return self._error("Invalid payload")
 
@@ -67,11 +79,16 @@ class Server(Thread):
             return self._error("Unknown method")
 
         try:
-            validate(request["parameters"], schema)
+            self.validator.validate(request["parameters"], schema)
         except ValidationError:
             return self._error("Parameters do not match the method signature")
 
-        return "goodbye, world"
+        args = list(request["parameters"]["args"])
+        kwargs = request["parameters"]["kwargs"]
+
+        response = func(*args, **kwargs)
+
+        return json.dumps(response)
 
     def run(self):
         """

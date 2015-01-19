@@ -63,6 +63,8 @@ class TestServer(unittest.TestCase):
         request = json.dumps({
             "method": "not a method",
             "parameters": {
+                "args": [],
+                "kwargs": {}
             }
         })
 
@@ -83,6 +85,8 @@ class TestServer(unittest.TestCase):
         request = json.dumps({
             "method": "hello",
             "parameters": {
+                "args": [],
+                "kwargs": {}
             }
         })
 
@@ -95,6 +99,21 @@ class TestServer(unittest.TestCase):
         """
         Test a successful call
         """
+
+        expected = "Hello, Fred"
+
+        request = json.dumps({
+            "method": "hello",
+            "parameters": {
+                "args": ["Fred"],
+                "kwargs": {}
+            }
+        })
+
+        response = self.server._handle_request(request)
+        response = json.loads(response)
+
+        self.assertEqual(expected, response)
 
     def test_failing_method(self):
         """
