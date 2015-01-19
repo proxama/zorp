@@ -7,7 +7,7 @@ import unittest
 
 from decorator import remote_method
 from registry import Registry
-from server import Server
+from server import ServerThread
 
 class TestServer(unittest.TestCase):
     """
@@ -26,7 +26,7 @@ class TestServer(unittest.TestCase):
 
         self.registry = Registry()
 
-        self.server = Server(use_registry=self.registry)
+        self.server = ServerThread(use_registry=self.registry)
 
         @remote_method(use_registry=self.registry)
         def hello(name):

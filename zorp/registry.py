@@ -2,6 +2,7 @@
 Remote method registry
 """
 
+from copy import deepcopy
 from inspect import getargspec
 
 BASE_SCHEMA = {
@@ -35,7 +36,7 @@ def schema_from_function(func):
     else:
         defaults = []
 
-    schema = BASE_SCHEMA
+    schema = deepcopy(BASE_SCHEMA)
 
     schema["properties"]["args"]["minItems"] = len(args)
     schema["properties"]["args"]["maxItems"] = len(args)

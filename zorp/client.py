@@ -28,7 +28,7 @@ class Client(object):
             host=DEFAULT_HOST,
             port=DEFAULT_PORT,
             timeout=DEFAULT_TIMEOUT,
-            tries=DEFAULT_TRIES
+            max_tries=DEFAULT_TRIES
             ):
         """
         Store the host and port
@@ -38,7 +38,7 @@ class Client(object):
         self.port = port
 
         self.timeout = timeout
-        self.tries = tries
+        self.max_tries = max_tries
 
         self.context = zmq.Context()
 
@@ -75,7 +75,7 @@ class Client(object):
 
         call_count = 0
 
-        while call_count < self.tries:
+        while call_count < self.max_tries:
             socket = self.__create_connection(self.timeout)
             socket.send_string(request)
 

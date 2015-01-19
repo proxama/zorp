@@ -8,6 +8,4 @@ from zorp import remote_method, Server
 def hello(who):
     return "Hello, {}".format(who)
 
-server = Server()
-server.start()
-server.join()
+server = Server().join()

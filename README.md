@@ -38,7 +38,7 @@ By default, the server will:
 
 These can be overridden with parameters:
 
-    Server(host="127.0.0.1", port=8001)
+    Server("127.0.0.1", port=8001)
 
 While running, the server will:
 

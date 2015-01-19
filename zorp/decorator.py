@@ -10,6 +10,13 @@ def remote_method(name=None, use_registry=registry):
     Use the function's own name if none is supplied
     """
 
+    if callable(name):
+        # Allow calling without arguments
+
+        use_registry.put(name.__name__, name)
+
+        return name
+
     def wrap(func):
         """
         function wrapper
@@ -18,13 +25,5 @@ def remote_method(name=None, use_registry=registry):
         use_registry.put(name or func.__name__, func)
 
         return func
-
-    if callable(name):
-        # Allow calling without arguments
-
-        func = name
-        name = func.__name__
-
-        return wrap(func)
 
     return wrap

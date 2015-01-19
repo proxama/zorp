@@ -34,7 +34,7 @@ REQUEST_SCHEMA = {
     }
 }
 
-class Server(Thread):
+class ServerThread(Thread):
     """
     Zorp server
     """
@@ -59,7 +59,7 @@ class Server(Thread):
 
         self.validator = Draft4Validator(REQUEST_SCHEMA)
 
-        super(Server, self).__init__(*args, **kwargs)
+        super(ServerThread, self).__init__(*args, **kwargs)
 
     def _error(self, message):
         """
@@ -119,3 +119,14 @@ class Server(Thread):
             response = self._handle_request(request)
 
             socket.send_string(response)
+
+def Server(*args, **kwargs):
+    """
+    A wrapper for creating, starting,
+    and returning a new ServerThread
+    """
+
+    thread = ServerThread(*args, **kwargs)
+    thread.start()
+
+    return thread
