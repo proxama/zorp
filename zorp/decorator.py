@@ -22,6 +22,9 @@ def remote_method(name=None, use_registry=registry):
     if callable(name):
         # Allow calling without arguments
 
-        return wrap(name)
+        func = name
+        name = func.__name__
+
+        return wrap(func)
 
     return wrap

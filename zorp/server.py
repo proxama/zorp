@@ -7,7 +7,8 @@ from jsonschema import Draft4Validator, ValidationError
 from threading import Thread
 import zmq
 
-from registry import registry, BASE_SCHEMA
+from registry import registry
+from settings import DEFAULT_PORT
 
 REQUEST_SCHEMA = {
     "type": "object",
@@ -38,7 +39,15 @@ class Server(Thread):
     Zorp server
     """
 
-    def __init__(self, address="0.0.0.0", port=5560, use_registry=registry, *args, **kwargs):
+    daemon = True
+
+    def __init__(
+            self,
+            address="0.0.0.0",
+            port=DEFAULT_PORT,
+            use_registry=registry,
+            *args, **kwargs
+            ):
         """
         Set the bind address and port
         """

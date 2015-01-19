@@ -2,6 +2,7 @@
 Clienht tests
 """
 
+import json
 import unittest
 
 from client import Client
@@ -37,7 +38,7 @@ class TestClient(unittest.TestCase):
 
         request = self.client._create_request("hello")
 
-        self.assertDictEqual(expected, request)
+        self.assertDictEqual(expected, json.loads(request))
 
     def test_payload_with_args(self):
         """
@@ -54,7 +55,7 @@ class TestClient(unittest.TestCase):
 
         request = self.client._create_request("hello", "world")
 
-        self.assertDictEqual(expected, request)
+        self.assertDictEqual(expected, json.loads(request))
 
     def test_payload_with_kwargs(self):
         """
@@ -73,7 +74,7 @@ class TestClient(unittest.TestCase):
 
         request = self.client._create_request("hello", who="world")
 
-        self.assertDictEqual(expected, request)
+        self.assertDictEqual(expected, json.loads(request))
 
     def test_payload_with_args_and_kwargs(self):
         """
@@ -92,4 +93,4 @@ class TestClient(unittest.TestCase):
 
         request = self.client._create_request("hello", "world", alias="Gaia")
 
-        self.assertDictEqual(expected, request)
+        self.assertDictEqual(expected, json.loads(request))
