@@ -8,6 +8,7 @@
     * retrieve it from the registry
     * verify the parameters against the method schema
     * call the method
+    * if the method call fails, return an error
     * reply with the response
 
 * client
