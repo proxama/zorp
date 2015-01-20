@@ -4,8 +4,8 @@ Decorator tests
 
 import unittest
 
-from decorator import remote_method
-from registry import Registry
+from zorp import remote_method
+from zorp.registry import Registry
 
 class TestRemoteMethod(unittest.TestCase):
     """

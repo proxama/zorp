@@ -4,7 +4,7 @@ Registry tests
 
 import unittest
 
-from registry import Registry, schema_from_function
+from zorp.registry import Registry, schema_from_function
 
 class TestRegistry(unittest.TestCase):
     """

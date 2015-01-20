@@ -2,7 +2,7 @@
 remote_method decorator
 """
 
-from registry import registry
+from zorp.registry import registry
 
 def remote_method(name=None, use_registry=registry):
     """

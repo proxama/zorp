@@ -2,6 +2,6 @@
 Zorp
 """
 
-from client import Client
-from decorator import remote_method
-from server import Server
+from zorp.client import Client
+from zorp.decorator import remote_method
+from zorp.server import Server

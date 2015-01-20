@@ -4,7 +4,7 @@ Schema generation tests
 
 import unittest
 
-from registry import schema_from_function
+from zorp.registry import schema_from_function
 
 class TestSchemaFromFunction(unittest.TestCase):
     """

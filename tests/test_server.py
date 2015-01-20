@@ -5,9 +5,9 @@ Server tests
 import json
 import unittest
 
-from decorator import remote_method
-from registry import Registry
-from server import ServerThread
+from zorp import remote_method
+from zorp.registry import Registry
+from zorp.server import ServerThread
 
 class TestServer(unittest.TestCase):
     """

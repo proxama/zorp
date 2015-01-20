@@ -5,7 +5,7 @@ Clienht tests
 import json
 import unittest
 
-from client import Client
+from zorp import Client
 
 class TestClient(unittest.TestCase):
     """

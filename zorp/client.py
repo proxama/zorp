@@ -5,7 +5,7 @@ Client
 import json
 import zmq
 
-from settings import (
+from zorp.settings import (
     DEFAULT_HOST,
     DEFAULT_PORT,
     DEFAULT_TIMEOUT,

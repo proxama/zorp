@@ -7,8 +7,8 @@ from jsonschema import Draft4Validator, ValidationError
 from threading import Thread
 import zmq
 
-from registry import registry
-from settings import DEFAULT_PORT
+from zorp.registry import registry
+from zorp.settings import DEFAULT_PORT
 
 REQUEST_SCHEMA = {
     "type": "object",
