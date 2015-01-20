@@ -2,7 +2,7 @@
 
 Zorp is a library for easing the creation and use of remote procedure calls over [ZeroMQ](http://zeromq.org/) sockets.
 
-**Z**er**o**MQ **RP**C ;)
+ZerOmq RPc ;)
 
 # Server Features
 
