@@ -12,4 +12,4 @@ def hello(who):
 def say_bye():
     return "Goodbye world"
 
-server = Server().join()
+server = Server(call_count=2).join()

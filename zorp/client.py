@@ -71,12 +71,15 @@ class Client(object):
         Call a remote method with the arguments supplied
         """
 
+        timeout = kwargs.get("timeout", self.timeout)
+        max_tries = kwargs.get("max_tries", self.max_tries)
+
         request = self._create_request(method, *args, **kwargs)
 
         call_count = 0
 
-        while call_count < self.max_tries:
-            socket = self.__create_connection(self.timeout)
+        while call_count < max_tries:
+            socket = self.__create_connection(timeout)
             socket.send_string(request)
 
             try:

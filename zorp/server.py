@@ -45,6 +45,7 @@ class ServerThread(Thread):
             self,
             address="0.0.0.0",
             port=DEFAULT_PORT,
+            call_count=None,
             use_registry=registry,
             *args, **kwargs
             ):
@@ -56,6 +57,8 @@ class ServerThread(Thread):
 
         self.address = address
         self.port = port
+
+        self.call_count = call_count
 
         self.validator = Draft4Validator(REQUEST_SCHEMA)
 
@@ -112,13 +115,17 @@ class ServerThread(Thread):
         socket = context.socket(zmq.REP)
         socket.bind("tcp://{}:{}".format(self.address, self.port))
 
+        call_count = 0
+
         # Wait for requests and process them
-        while True:
+        while self.call_count is None or call_count < self.call_count:
             request = socket.recv_string()
 
             response = self._handle_request(request)
 
             socket.send_string(response)
+
+            call_count += 1
 
 def Server(*args, **kwargs):
     """
