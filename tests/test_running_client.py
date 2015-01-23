@@ -3,50 +3,11 @@ Clienht tests
 """
 
 from datetime import datetime
-import json
-from threading import Thread
 import unittest
-import zmq
 
-from zorp import Client
+from zorp import Client, Server, remote_method
+from zorp.registry import Registry
 from zorp.client import TriesExceededException
-from zorp.settings import DEFAULT_PORT
-
-class FakeServer(Thread):
-    """
-    Fakes a zorp server
-    """
-
-    def __init__(self, call_count, *args, **kwargs):
-        """
-        Set up the socket
-        """
-
-        self.call_count = call_count
-
-        context = zmq.Context()
-        self.socket = context.socket(zmq.REP)
-        self.socket.setsockopt(zmq.RCVTIMEO, 500)
-        self.socket.bind("tcp://0.0.0.0:{}".format(DEFAULT_PORT))
-
-        super(FakeServer, self).__init__(*args, **kwargs)
-
-    def run(self):
-        """
-        Listen for the expected number of calls
-        """
-
-        call_count = 0
-
-        while call_count < self.call_count:
-            try:
-                self.socket.recv_string()
-            except zmq.error.Again:
-                raise Exception("Expected more calls")
-
-            self.socket.send_string(json.dumps("ACK"))
-
-            call_count += 1
 
 class TestRunningClient(unittest.TestCase):
     """
@@ -58,17 +19,37 @@ class TestRunningClient(unittest.TestCase):
         Create a new client
         """
 
+        self.registry = Registry()
+
+        @remote_method(use_registry=self.registry)
+        def foo():
+            return "ACK"
+
     def test_defaults(self):
         """
         Test the client connects to the default address
         """
 
-        FakeServer(1).start()
+        Server(call_count=1, use_registry=self.registry)
 
         client = Client(timeout=500, max_tries=1)
         response = client.call("foo")
 
         self.assertEqual("ACK", response)
+
+    def test_fire_and_forget(self):
+        """
+        Test that fire and forget doesn't wait for a response
+        """
+
+        # Don't start a server
+        client = Client(timeout=500, max_tries=1)
+        client.fire_and_forget("foo")
+        # No exception is raised
+
+        # Now start the server
+        Server(call_count=1, use_registry=self.registry).join()
+        # It doesn't raise an exception
 
     def _test_failing_call_time(self, timeout, tries, client_params=True):
         """
