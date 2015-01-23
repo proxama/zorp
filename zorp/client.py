@@ -69,10 +69,11 @@ class Client(object):
     def call(self, method, *args, **kwargs):
         """
         Call a remote method with the arguments supplied
+        and return the response
         """
 
-        timeout = kwargs.get("timeout", self.timeout)
-        max_tries = kwargs.get("max_tries", self.max_tries)
+        timeout = kwargs.pop("timeout", self.timeout)
+        max_tries = kwargs.pop("max_tries", self.max_tries)
 
         request = self._create_request(method, *args, **kwargs)
 
@@ -84,6 +85,7 @@ class Client(object):
 
             try:
                 response = socket.recv_string()
+                return json.loads(response)
             except zmq.error.Again:
                 # Close the socket and try again
                 call_count += 1
@@ -91,8 +93,18 @@ class Client(object):
                 socket.setsockopt(zmq.LINGER, 0)
                 socket.close()
 
-                continue
-
-            return json.loads(response)
-
         raise TriesExceededException
+
+    def fire_and_forget(self, method, *args, **kwargs):
+        """
+        Call a remote method but don't wait for it to return
+        """
+
+        timeout = kwargs.pop("timeout", self.timeout)
+        max_tries = kwargs.pop("max_tries", self.max_tries)
+
+        request = self._create_request(method, *args, **kwargs)
+
+        socket = self.__create_connection(timeout)
+        socket.setsockopt(zmq.LINGER, timeout * max_tries)
+        socket.send_string(request)

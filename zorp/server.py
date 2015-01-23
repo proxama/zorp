@@ -127,6 +127,8 @@ class ServerThread(Thread):
 
             call_count += 1
 
+        socket.close()
+
 def Server(*args, **kwargs):
     """
     A wrapper for creating, starting,
