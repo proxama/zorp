@@ -1,9 +1,13 @@
 # TODO
 
-* Add fire-and-forget functionality to the client
+* `remote_method` decorator
 
-* Make the server not a thread
+* remote method registry
 
+* server
+    * No need to run as a thread
+
+* client
 
 # Done
 
@@ -35,3 +39,4 @@
     * fail when the maximum number of tries have timed out
     * parse and return the response
     * return (schema, function) tuples from a provided method name
+    * Add fire-and-forget functionality
