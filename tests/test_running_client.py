@@ -5,7 +5,7 @@ Client tests
 from datetime import datetime
 import unittest
 
-from zorp import Client, Server
+from zorp import Client, Server, ServerProcess
 from zorp.client import TriesExceededException
 from zorp.registry import Registry
 
@@ -31,12 +31,15 @@ class TestRunningClient(unittest.TestCase):
         Test the client connects to the default address
         """
 
-        Server(call_count=1, use_registry=self.registry)
+        proc = ServerProcess(use_registry=self.registry)
+        proc.start()
 
         client = Client(timeout=500, max_tries=1)
         response = client.call(self.method_name)
 
         self.assertEqual(self.expected, response)
+
+        proc.terminate()
 
     def test_fire_and_forget(self):
         """
@@ -49,7 +52,7 @@ class TestRunningClient(unittest.TestCase):
         # No exception is raised
 
         # Now start the server
-        Server(call_count=1, use_registry=self.registry).join()
+        Server(call_count=1, use_registry=self.registry).start()
         # It doesn't raise an exception
 
     def _test_failing_call_time(self, timeout, tries, client_params=True):

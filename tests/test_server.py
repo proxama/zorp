@@ -7,7 +7,7 @@ import unittest
 
 from zorp import remote_method
 from zorp.registry import Registry
-from zorp.server import ServerThread
+from zorp.server import Server
 
 class TestServer(unittest.TestCase):
     """
@@ -26,7 +26,7 @@ class TestServer(unittest.TestCase):
 
         self.registry = Registry()
 
-        self.server = ServerThread(use_registry=self.registry)
+        self.server = Server(use_registry=self.registry)
 
         @remote_method(use_registry=self.registry)
         def hello(name):

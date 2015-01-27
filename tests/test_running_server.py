@@ -4,7 +4,7 @@ Server tests
 
 import unittest
 
-from zorp import Client, remote_method, Server, TriesExceededException
+from zorp import Client, ServerProcess, TriesExceededException
 from zorp.registry import Registry
 from zorp.settings import DEFAULT_HOST, DEFAULT_PORT
 
@@ -45,11 +45,14 @@ class TestRunningServer(unittest.TestCase):
         on the default address and port
         """
 
-        Server(use_registry=self.registry, call_count=1)
+        proc = ServerProcess(use_registry=self.registry)
+        proc.start()
 
         response = self.__get_client().call(self.method_name)
 
         self.assertEqual(self.expected, response)
+
+        proc.terminate()
 
     def test_specified_host_and_port(self):
         """
@@ -60,12 +63,12 @@ class TestRunningServer(unittest.TestCase):
         new_host = "127.0.0.2"
         new_port = 8001
 
-        Server(
+        proc = ServerProcess(
             new_host,
             port=new_port,
             use_registry=self.registry,
-            call_count=1
         )
+        proc.start()
 
         with self.assertRaises(TriesExceededException):
             response = self.__get_client().call(self.method_name)
@@ -74,3 +77,25 @@ class TestRunningServer(unittest.TestCase):
         response = self.__get_client(new_host, new_port).call(self.method_name)
 
         self.assertEqual(self.expected, response)
+
+        proc.terminate()
+
+    def test_call_count(self):
+        """
+        Test that specifying a call count stops the server
+        after the expected number of calls
+        """
+
+        proc = ServerProcess(call_count=2)
+        proc.start()
+
+        client = self.__get_client()
+
+        # Still running after the first call
+        client.call(self.method_name)
+        self.assertTrue(proc.is_alive())
+
+        # Dead after the second call
+        client.call(self.method_name)
+        proc.join(1) # We'll let it die properly
+        self.assertFalse(proc.is_alive())
