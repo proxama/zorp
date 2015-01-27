@@ -4,7 +4,7 @@ Server
 
 import json
 from jsonschema import Draft4Validator, ValidationError
-from threading import Thread
+from multiprocessing import Process
 import zmq
 
 from zorp.registry import registry
@@ -34,12 +34,10 @@ REQUEST_SCHEMA = {
     }
 }
 
-class ServerThread(Thread):
+class Server(object):
     """
     Zorp server
     """
-
-    daemon = True
 
     def __init__(
             self,
@@ -61,8 +59,6 @@ class ServerThread(Thread):
         self.call_count = call_count
 
         self.validator = Draft4Validator(REQUEST_SCHEMA)
-
-        super(ServerThread, self).__init__(*args, **kwargs)
 
     def _error(self, message):
         """
@@ -105,7 +101,7 @@ class ServerThread(Thread):
 
         return json.dumps(response)
 
-    def run(self):
+    def start(self):
         """
         Open the socket and process requests
         """
@@ -119,7 +115,13 @@ class ServerThread(Thread):
 
         # Wait for requests and process them
         while self.call_count is None or call_count < self.call_count:
-            request = socket.recv_string()
+            try:
+                request = socket.recv_string()
+            except KeyboardInterrupt:
+                # Die gracefully
+                socket.setsockopt(zmq.LINGER, 0)
+                socket.close()
+                return
 
             response = self._handle_request(request)
 
@@ -129,13 +131,32 @@ class ServerThread(Thread):
 
         socket.close()
 
-def Server(*args, **kwargs):
+class ServerProcess(Process):
     """
-    A wrapper for creating, starting,
-    and returning a new ServerThread
+    Zorp server wrapped in a multiprocessing.Process
     """
 
-    thread = ServerThread(*args, **kwargs)
-    thread.start()
+    daemon = True
 
-    return thread
+    def __init__(self, *args, **kwargs):
+        """
+        Set up the zorp server
+        """
+
+        self.server = Server(*args, **kwargs)
+
+        super(ServerProcess, self).__init__()
+
+    def __interrupt_handler(self):
+        """
+        Handle the interrupt signal
+        """
+
+        # Actually, we don't really need to clean up
+
+    def run(self):
+        """
+        Open the socket and process requests
+        """
+
+        self.server.start()
