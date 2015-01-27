@@ -95,11 +95,11 @@ class Server(object):
         kwargs = request["parameters"]["kwargs"]
 
         try:
-            response = func(*args, **kwargs)
+            response = Serialiser.encode(func(*args, **kwargs))
         except Exception as exc:
             return self._error(str(exc))
 
-        return Serialiser.encode(response)
+        return response
 
     def start(self):
         """
