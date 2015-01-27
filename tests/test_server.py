@@ -2,11 +2,11 @@
 Server tests
 """
 
-import json
 import unittest
 
 from zorp import remote_method
 from zorp.registry import Registry
+from zorp.serialiser import Serialiser
 from zorp.server import Server
 
 class TestServer(unittest.TestCase):
@@ -41,14 +41,14 @@ class TestServer(unittest.TestCase):
             "error": "Invalid payload"
         }
 
-        # Invalid json
-        response = self.server._handle_request("")
-        response = json.loads(response)
+        # Invalid bson
+        response = self.server._handle_request(Serialiser.encode(""))
+        response = Serialiser.decode(response)
         self.assertDictEqual(expected, response)
 
         # Doesn't match the request schema
-        response = self.server._handle_request("{}")
-        response = json.loads(response)
+        response = self.server._handle_request(Serialiser.encode("{}"))
+        response = Serialiser.decode(response)
         self.assertDictEqual(expected, response)
 
     def test_unknown_method(self):
@@ -60,7 +60,7 @@ class TestServer(unittest.TestCase):
             "error": "Unknown method"
         }
 
-        request = json.dumps({
+        request = Serialiser.encode({
             "method": "not a method",
             "parameters": {
                 "args": [],
@@ -69,7 +69,7 @@ class TestServer(unittest.TestCase):
         })
 
         response = self.server._handle_request(request)
-        response = json.loads(response)
+        response = Serialiser.decode(response)
 
         self.assertDictEqual(expected, response)
 
@@ -82,7 +82,7 @@ class TestServer(unittest.TestCase):
             "error": "Parameters do not match the method signature"
         }
 
-        request = json.dumps({
+        request = Serialiser.encode({
             "method": "hello",
             "parameters": {
                 "args": [],
@@ -91,7 +91,7 @@ class TestServer(unittest.TestCase):
         })
 
         response = self.server._handle_request(request)
-        response = json.loads(response)
+        response = Serialiser.decode(response)
 
         self.assertDictEqual(expected, response)
 
@@ -102,7 +102,7 @@ class TestServer(unittest.TestCase):
 
         expected = "Hello, Fred"
 
-        request = json.dumps({
+        request = Serialiser.encode({
             "method": "hello",
             "parameters": {
                 "args": ["Fred"],
@@ -111,7 +111,7 @@ class TestServer(unittest.TestCase):
         })
 
         response = self.server._handle_request(request)
-        response = json.loads(response)
+        response = Serialiser.decode(response)
 
         self.assertEqual(expected, response)
 
@@ -130,7 +130,7 @@ class TestServer(unittest.TestCase):
             "error": error_message
         }
 
-        request = json.dumps({
+        request = Serialiser.encode({
             "method": "bad_method",
             "parameters": {
                 "args": [],
@@ -139,6 +139,6 @@ class TestServer(unittest.TestCase):
         })
 
         response = self.server._handle_request(request)
-        response = json.loads(response)
+        response = Serialiser.decode(response)
 
         self.assertEqual(expected, response)
