@@ -1,10 +1,8 @@
 # TODO
 
-* Investigate other serialisers
-
-    Maybe BSON?
-
 # Done
+
+* BSON implemented as the serialiser
 
 * `remote_method` decorator
     * if no name is passed in to the decorator, use the function's name

@@ -1,2 +1,4 @@
 jsonschema==2.4.0
+pymongo==2.7.2
+pytz==2014.10
 pyzmq==14.4.1

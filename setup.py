@@ -32,5 +32,5 @@ setup(
     ],
     keywords='development zeromq rpc',
     packages=find_packages(exclude=['tests*']),
-    install_requires=['pyzmq', 'jsonschema'],
+    install_requires=['pyzmq', 'jsonschema', 'pymongo'],
 )
