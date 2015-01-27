@@ -2,28 +2,30 @@
 Zorp serialiser
 """
 
-import datetime
-from json import JSONEncoder
+from bson import BSON
 
-EPOCH = datetime.datetime(1970, 1, 1)
-
-class Serialiser(JSONEncoder):
+class Serialiser(object):
     """
-    This is simply a JSON encode/decoder
-    that converts datetimes into unix timestamps
+    This is simply a wrapper for the bson encoder/decoder
+    that can deal with non-dict types
     """
 
-    def default(self, obj):
+    WRAPPER = "data"
+
+    @staticmethod
+    def encode(obj):
         """
-        Convert dates
+        Wrap the object in a dict and bson encode it
         """
 
-        if isinstance(obj, datetime.datetime):
-            # return obj.timestamp()
-            # O, to be python3 only :(
+        return BSON.encode({
+            Serialiser.WRAPPER: obj
+        })
 
-            delta = obj - EPOCH
+    @staticmethod
+    def decode(obj):
+        """
+        bson decode the object and unwrap it
+        """
 
-            return delta.total_seconds()
-
-        return super(Serialiser, self).default(obj)
+        return BSON(obj).decode()[Serialiser.WRAPPER]

@@ -2,7 +2,6 @@
 Client
 """
 
-import json
 import zmq
 
 from zorp.serialiser import Serialiser
@@ -48,20 +47,20 @@ class Client(object):
         Handle a received response
         """
 
-        return json.loads(response)
+        return Serialiser.decode(response)
 
     def _create_request(self, method, *args, **kwargs):
         """
         Construct a request payload
         """
 
-        return json.dumps({
+        return Serialiser.encode({
             "method": method,
             "parameters": {
                 "args": list(args),
                 "kwargs": kwargs
             }
-        }, cls=Serialiser)
+        })
 
     def __create_connection(self, timeout):
         """
@@ -89,10 +88,10 @@ class Client(object):
 
         while call_count < max_tries:
             socket = self.__create_connection(timeout)
-            socket.send_string(request)
+            socket.send(request)
 
             try:
-                response = socket.recv_string()
+                response = socket.recv()
                 return self._handle_response(response)
             except zmq.error.Again:
                 # Close the socket and try again
@@ -115,4 +114,4 @@ class Client(object):
 
         socket = self.__create_connection(timeout)
         socket.setsockopt(zmq.LINGER, timeout * max_tries)
-        socket.send_string(request)
+        socket.send(request)

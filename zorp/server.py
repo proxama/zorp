@@ -2,7 +2,6 @@
 Server
 """
 
-import json
 from jsonschema import Draft4Validator, ValidationError
 from multiprocessing import Process
 import zmq
@@ -66,9 +65,9 @@ class Server(object):
         Construct an error response with the given message
         """
 
-        return json.dumps({
+        return Serialiser.encode({
             "error": message
-        }, cls=Serialiser)
+        })
 
     def _handle_request(self, request):
         """
@@ -76,7 +75,7 @@ class Server(object):
         """
 
         try:
-            request = json.loads(request)
+            request = Serialiser.decode(request)
 
             self.validator.validate(request, REQUEST_SCHEMA)
         except (ValueError, ValidationError):
@@ -100,7 +99,7 @@ class Server(object):
         except Exception as exc:
             return self._error(str(exc))
 
-        return json.dumps(response, cls=Serialiser)
+        return Serialiser.encode(response)
 
     def start(self):
         """
@@ -117,7 +116,7 @@ class Server(object):
         # Wait for requests and process them
         while self.call_count is None or call_count < self.call_count:
             try:
-                request = socket.recv_string()
+                request = socket.recv()
             except KeyboardInterrupt:
                 # Die gracefully
                 socket.setsockopt(zmq.LINGER, 0)
@@ -126,7 +125,7 @@ class Server(object):
 
             response = self._handle_request(request)
 
-            socket.send_string(response)
+            socket.send(response)
 
             call_count += 1
 
