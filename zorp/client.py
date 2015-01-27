@@ -5,6 +5,7 @@ Client
 import json
 import zmq
 
+from zorp.serialiser import Serialiser
 from zorp.settings import (
     DEFAULT_HOST,
     DEFAULT_PORT,
@@ -42,6 +43,13 @@ class Client(object):
 
         self.context = zmq.Context()
 
+    def _handle_response(self, response):
+        """
+        Handle a received response
+        """
+
+        return json.loads(response)
+
     def _create_request(self, method, *args, **kwargs):
         """
         Construct a request payload
@@ -53,7 +61,7 @@ class Client(object):
                 "args": list(args),
                 "kwargs": kwargs
             }
-        })
+        }, cls=Serialiser)
 
     def __create_connection(self, timeout):
         """
@@ -85,7 +93,7 @@ class Client(object):
 
             try:
                 response = socket.recv_string()
-                return json.loads(response)
+                return self._handle_response(response)
             except zmq.error.Again:
                 # Close the socket and try again
                 call_count += 1

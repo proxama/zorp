@@ -8,6 +8,7 @@ from multiprocessing import Process
 import zmq
 
 from zorp.registry import registry
+from zorp.serialiser import Serialiser
 from zorp.settings import DEFAULT_PORT
 
 REQUEST_SCHEMA = {
@@ -67,11 +68,11 @@ class Server(object):
 
         return json.dumps({
             "error": message
-        })
+        }, cls=Serialiser)
 
     def _handle_request(self, request):
         """
-        Wait for a request and process it
+        Process a received request
         """
 
         try:
@@ -99,7 +100,7 @@ class Server(object):
         except Exception as exc:
             return self._error(str(exc))
 
-        return json.dumps(response)
+        return json.dumps(response, cls=Serialiser)
 
     def start(self):
         """
