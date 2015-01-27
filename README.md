@@ -29,7 +29,19 @@ Starting a server is easy.
     from zorp import Server
 
     # Start a server
-    Server()
+    Server().start()
+
+By default, the server will block until you exit with `ctrl-c`.
+There is a multiprocessing server if you want the server to run in a separate process.
+
+    from zorp import ServerProcess
+
+    # Start the server
+    server = ServerProcess().start()
+
+    print("The server is running in the background")
+
+    server.terminate()  # Kill the server
 
 By default, the server will:
 

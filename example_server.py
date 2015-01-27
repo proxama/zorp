@@ -16,4 +16,4 @@ def say_bye():
 
     return "Goodbye world"
 
-Server(call_count=3).join()
+Server(call_count=3).start()

@@ -1,13 +1,8 @@
 # TODO
 
-* `remote_method` decorator
+* Investigate other serialisers
 
-* remote method registry
-
-* server
-    * No need to run as a thread
-
-* client
+    Maybe BSON?
 
 # Done
 
@@ -29,6 +24,7 @@
     * call the method
     * if the method call fails, return an error
     * reply with the response
+    * No need to run as a thread
 
 * client
     * open a zeromq socket using the specified host and port
