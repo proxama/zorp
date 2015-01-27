@@ -1,13 +1,13 @@
 """
-Clienht tests
+Client tests
 """
 
 from datetime import datetime
 import unittest
 
-from zorp import Client, Server, remote_method
-from zorp.registry import Registry
+from zorp import Client, Server
 from zorp.client import TriesExceededException
+from zorp.registry import Registry
 
 class TestRunningClient(unittest.TestCase):
     """
@@ -19,11 +19,12 @@ class TestRunningClient(unittest.TestCase):
         Create a new client
         """
 
+        self.expected = "ACL"
+        self.method_name = "my method"
+
         self.registry = Registry()
 
-        @remote_method(use_registry=self.registry)
-        def foo():
-            return "ACK"
+        self.registry.put(self.method_name, lambda: self.expected)
 
     def test_defaults(self):
         """
@@ -33,9 +34,9 @@ class TestRunningClient(unittest.TestCase):
         Server(call_count=1, use_registry=self.registry)
 
         client = Client(timeout=500, max_tries=1)
-        response = client.call("foo")
+        response = client.call(self.method_name)
 
-        self.assertEqual("ACK", response)
+        self.assertEqual(self.expected, response)
 
     def test_fire_and_forget(self):
         """
@@ -44,7 +45,7 @@ class TestRunningClient(unittest.TestCase):
 
         # Don't start a server
         client = Client(timeout=500, max_tries=1)
-        client.fire_and_forget("foo")
+        client.fire_and_forget(self.method_name)
         # No exception is raised
 
         # Now start the server
@@ -69,9 +70,9 @@ class TestRunningClient(unittest.TestCase):
 
         with self.assertRaises(TriesExceededException):
             if not client_params:
-                client.call("foo", timeout=timeout, max_tries=tries)
+                client.call(self.method_name, timeout=timeout, max_tries=tries)
             else:
-                client.call("foo")
+                client.call(self.method_name)
 
         end = datetime.now()
 

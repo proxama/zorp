@@ -20,11 +20,12 @@ class TestRunningServer(unittest.TestCase):
         and start a server
         """
 
+        self.expected = "ACK"
+        self.method_name = "my method"
+
         self.registry = Registry()
 
-        @remote_method(use_registry=self.registry)
-        def foo():
-            return "ACK"
+        self.registry.put(self.method_name, lambda: self.expected)
 
     def __get_client(self, host=DEFAULT_HOST, port=DEFAULT_PORT):
         """
@@ -46,9 +47,9 @@ class TestRunningServer(unittest.TestCase):
 
         Server(use_registry=self.registry, call_count=1)
 
-        response = self.__get_client().call("foo")
+        response = self.__get_client().call(self.method_name)
 
-        self.assertEqual("ACK", response)
+        self.assertEqual(self.expected, response)
 
     def test_specified_host_and_port(self):
         """
@@ -67,9 +68,9 @@ class TestRunningServer(unittest.TestCase):
         )
 
         with self.assertRaises(TriesExceededException):
-            response = self.__get_client().call("foo")
+            response = self.__get_client().call(self.method_name)
 
         # Connect to the specified host/port
-        response = self.__get_client(new_host, new_port).call("foo")
+        response = self.__get_client(new_host, new_port).call(self.method_name)
 
-        self.assertEqual("ACK", response)
+        self.assertEqual(self.expected, response)

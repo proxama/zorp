@@ -31,7 +31,7 @@
     * reply with the response
 
 * client
-    * open a zermq socket using the specified host and port
+    * open a zeromq socket using the specified host and port
     * construct a request payload using the method name and any parameters supplied
     * send the request
     * wait for a response
