@@ -1,5 +1,5 @@
 """
-Clienht tests
+Client tests
 """
 
 import unittest
