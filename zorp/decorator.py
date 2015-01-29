@@ -6,7 +6,7 @@ from zorp.registry import registry
 
 def func_name(func):
     """
-    Return the functions fully-qualified name
+    Return func's fully-qualified name
     """
 
     if hasattr(func, "__module__"):
@@ -29,7 +29,7 @@ def remote_method(name=None, use_registry=registry):
 
     def wrap(func):
         """
-        function wrapper
+        Function wrapper
         """
 
         use_registry.put(name or func_name(func), func)
