@@ -62,7 +62,7 @@ class Client(object):
             }
         })
 
-    def __create_connection(self, timeout):
+    def _create_connection(self, timeout):
         """
         Create the creation to the server
         """
@@ -87,7 +87,7 @@ class Client(object):
         call_count = 0
 
         while call_count < max_tries:
-            socket = self.__create_connection(timeout)
+            socket = self._create_connection(timeout)
             socket.send(request)
 
             try:
@@ -112,6 +112,6 @@ class Client(object):
 
         request = self._create_request(method, *args, **kwargs)
 
-        socket = self.__create_connection(timeout)
+        socket = self._create_connection(timeout)
         socket.setsockopt(zmq.LINGER, timeout * max_tries)
         socket.send(request)
