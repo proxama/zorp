@@ -6,7 +6,7 @@ with open("README.txt") as readme:
 setup(
     name='zorp',
     packages=['zorp'],
-    version='0.1.0',
+    version='0.1.1',
     author='Steve Engledow',
     author_email='steve.engledow@proxama.com',
     url='https://git.prx.ma/server/zorp.git',

@@ -35,7 +35,7 @@ class TestRemoteMethod(unittest.TestCase):
 
         remote_method(use_registry=self.registry)(self.func)
 
-        (schema, func) = self.registry.get("func")
+        (schema, func) = self.registry.get("tests.test_decorator.func")
 
     def test_explicit_name(self):
         """

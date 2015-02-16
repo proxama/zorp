@@ -83,7 +83,7 @@ class TestServer(unittest.TestCase):
         }
 
         request = Serialiser.encode({
-            "method": "hello",
+            "method": "tests.test_server.hello",
             "parameters": {
                 "args": [],
                 "kwargs": {}
@@ -103,7 +103,7 @@ class TestServer(unittest.TestCase):
         expected = "Hello, Fred"
 
         request = Serialiser.encode({
-            "method": "hello",
+            "method": "tests.test_server.hello",
             "parameters": {
                 "args": ["Fred"],
                 "kwargs": {}
@@ -131,7 +131,7 @@ class TestServer(unittest.TestCase):
         }
 
         request = Serialiser.encode({
-            "method": "bad_method",
+            "method": "tests.test_server.bad_method",
             "parameters": {
                 "args": [],
                 "kwargs": {}
