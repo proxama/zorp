@@ -5,6 +5,8 @@ Mock Zorp calls within a unittest TestCase
 import unittest
 import warnings
 
+import six
+
 from zorp.test.mock import Mock
 
 def mock_method(name):
@@ -63,7 +65,7 @@ class ZorpTestCaseMixin(object):
 
             self.zorp_mock = Mock()
 
-            for name, func in self._get_zorp_mock_methods().iteritems():
+            for name, func in six.iteritems(self._get_zorp_mock_methods()):
                 self.zorp_mock.registry.put(name, func)
 
             self.zorp_mock.start()

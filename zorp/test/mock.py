@@ -2,6 +2,7 @@
 Mock client/server communication
 """
 
+import six
 import zmq
 
 from zorp.client import Client
@@ -79,7 +80,7 @@ class Mock(object):
         """
 
         original_values = {}
-        for name, value in patches.iteritems():
+        for name, value in six.iteritems(patches):
             original_values[name] = getattr(obj, name)
             setattr(obj, name, value)
 

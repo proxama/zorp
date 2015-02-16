@@ -23,6 +23,6 @@ setup(
         'Programming Language :: Python :: 3.4',
     ],
     keywords='development zeromq rpc',
-    install_requires=['pyzmq', 'jsonschema', 'pymongo'],
+    install_requires=['pyzmq', 'jsonschema', 'pymongo', 'six'],
     test_suite='tests'
 )
