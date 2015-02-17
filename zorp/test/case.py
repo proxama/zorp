@@ -66,7 +66,7 @@ class ZorpTestCaseMixin(object):
             self.zorp_mock = Mock()
 
             for name, func in six.iteritems(self._get_zorp_mock_methods()):
-                self.zorp_mock.registry.put(name, func)
+                self.zorp_mock.server.registry.put(name, func)
 
             self.zorp_mock.start()
 

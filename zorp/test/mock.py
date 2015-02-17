@@ -30,13 +30,23 @@ class Mock(object):
         mock.stop()
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, server=None, *args, **kwargs):
         """
-        Initialise the class. Arguments are used to create a `Server` instance.
+        Initialise the class.
+
+        If `server` is given, `Client` requests will be routed to that server.
+        This is useful when testing routing of method calls with a real server
+        class. Be careful when registering methods via `self.method`, as it
+        uses the server's registry - which defaults to a global registry.
+
+        If `server` is not given, the remaining arguments are used to create a
+        `Server` instance with a non-global registry.
         """
 
-        self.registry = Registry()
-        self.server = Server(use_registry=self.registry, *args, **kwargs)
+        if server is None:
+            server = Server(use_registry=Registry(), *args, **kwargs)
+
+        self.server = server
         self.mock_client_socket = MockClientSocket(self)
 
     def method(self, name):
@@ -51,7 +61,7 @@ class Mock(object):
         Unlike `decorator.remote_method`, the `name` parameter is required.
         """
 
-        return remote_method(name, use_registry=self.registry)
+        return remote_method(name, use_registry=self.server.registry)
 
     def start(self):
         """
