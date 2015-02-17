@@ -30,6 +30,7 @@ class Command(BaseCommand):
         from zorp import Server
         from zorp.registry import registry
         from zorp.settings import DEFAULT_HOST, DEFAULT_PORT
+        from zorp.zorp_django.loading import register_remote_methods_from_apps
 
         def run_server(address, port):
             """
@@ -37,18 +38,7 @@ class Command(BaseCommand):
             """
 
             # Import all remote_methods.
-            loaded_apps = []
-            for app in settings.INSTALLED_APPS:
-                try:
-                    # Try to import the app's `rpc` module. If successful,
-                    # the imported functions will register themselves with Zorp.
-                    __import__("{}.rpc".format(app))
-                except ImportError:
-                    # No remote methods, or error importing the module.
-                    pass
-                else:
-                    # `rpc` module was successfully loaded.
-                    loaded_apps.append(app)
+            loaded_apps = register_remote_methods_from_apps().loaded_apps
 
             # Display loaded apps.
             self.stdout.write("Loaded apps:\n")
