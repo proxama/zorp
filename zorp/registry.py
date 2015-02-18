@@ -3,7 +3,7 @@ Remote method registry
 """
 
 from copy import deepcopy
-from inspect import getargspec
+from inspect import getargspec, ismethod
 
 BASE_SCHEMA = {
     "additionalProperties": False,
@@ -26,6 +26,11 @@ def schema_from_function(func):
     """
 
     (args, _, _, defaults) = getargspec(func)
+
+    # `getargspec` returns the `self` arg for bound methods, even though it's
+    # implicitly provided when calling the function. Let's remove it.
+    if ismethod(func):
+        args = args[1:]
 
     args = args or []
     defaults = defaults or []

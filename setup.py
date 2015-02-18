@@ -18,13 +18,11 @@ setup(
         'Topic :: Software Development',
         'License :: OSI Approved :: MIT License',
         'Programming Language :: Python :: 2',
-        'Programming Language :: Python :: 2.6',
         'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.2',
-        'Programming Language :: Python :: 3.3',
         'Programming Language :: Python :: 3.4',
     ],
     keywords='development zeromq rpc',
-    install_requires=['pyzmq', 'jsonschema', 'pymongo'],
+    install_requires=['pyzmq', 'jsonschema', 'pymongo', 'six'],
+    test_suite='tests'
 )
