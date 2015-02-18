@@ -2,7 +2,10 @@
 Management command to run a Zorp server
 """
 
+from optparse import make_option
+
 from django.core.management.base import BaseCommand, CommandError
+from django.utils import autoreload
 
 class Command(BaseCommand):
     """
@@ -18,6 +21,11 @@ class Command(BaseCommand):
     help = "Runs a Zorp server"
     args = "[optional port number, or address:port]"
 
+    option_list = BaseCommand.option_list + (
+        make_option("--noreload", dest="use_reloader", default=True, action="store_false",
+            help="Tells Zorp to NOT use the auto-reloader."),
+    )
+
     def handle(self, address_port="", **options):
         """
         Command entry point.
@@ -32,7 +40,7 @@ class Command(BaseCommand):
         from zorp.settings import DEFAULT_HOST, DEFAULT_PORT
         from zorp.zorp_django.loading import register_remote_methods_from_apps
 
-        def run_server(address, port):
+        def run_server():
             """
             Run the server.
             """
@@ -64,6 +72,10 @@ class Command(BaseCommand):
             server = Server(address, port)
 
             self.stdout.write("Server listening on {}:{}\n".format(server.address, server.port))
+            if options['use_reloader']:
+                self.stdout.write("Auto-reloader: on")
+            else:
+                self.stdout.write("Auto-reloader: off")
             server.start()
 
             self.stdout.write("Server exited\n")
@@ -101,6 +113,10 @@ class Command(BaseCommand):
 
         default_host = getattr(settings, "ZORP_SERVER_HOST", DEFAULT_HOST)
         default_port = getattr(settings, "ZORP_SERVER_PORT", DEFAULT_PORT)
+
         address, port = get_address_port_from_string(address_port, default_host, default_port)
 
-        run_server(address, port)
+        if options['use_reloader']:
+            autoreload.main(run_server)
+        else:
+            run_server()
