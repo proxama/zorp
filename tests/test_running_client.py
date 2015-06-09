@@ -41,6 +41,7 @@ class TestRunningClient(unittest.TestCase):
 
         proc.terminate()
 
+    @unittest.skip("uses sockets")
     def test_fire_and_forget(self):
         """
         Test that fire and forget doesn't wait for a response
